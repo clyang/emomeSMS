@@ -101,10 +101,10 @@ def emomeLogin(username, password):
                 return s
             else:
                 print "Unable to retrieve Emome WebSMS interface"
-                return "False"
+                return False
         else:
             print "Something wrong with Emome authentication!"
-            return "False"
+            return False
     else:
         print "Unable to open Emome website"
         return False
