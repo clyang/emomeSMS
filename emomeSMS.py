@@ -11,21 +11,21 @@ def checkWordCount(msg):
         else:
             eChr = eChr + 1
     return aChr, eChr
-    
+
 def emomeSendSMS(s, recipients, msg):
     sendSMSUrl = "http://websms1.emome.net/sms/sendsms/send.jsp"
-    
+
     # Check message length
     aChr, eChr = checkWordCount(msg)
     if aChr == 0 and eChr > 160:
-        print "Pure English message shoud shorter than 160 characters"
+        print "Pure English message should shorter than 160 characters"
         return False
     elif aChr > 0 and (aChr+eChr) > 70:
         print "Mixed Chinese/English message should shorter than 70 characters"
         return False
     else:
         langCode = 2 if aChr == 0 else 7
-    
+
     # Process the phone number list
     tmpList = []
     recvList = []
@@ -34,13 +34,13 @@ def emomeSendSMS(s, recipients, msg):
         tmpList.append(recipients)
     else:
         tmpList = recipients.split(",")
-    
+
     # verify phone number format. This script only allows TW numbers
     for number in tmpList:
         match = re.search("^(\+8869\d{8}$|09\d{8}$)", number)
         if match:
             recvList.append(number.replace("+886", "09"))
-    
+
     # build recipients list
     if len(recvList) == 0 or len(recvList) > 200:
         print "Number of recipients should between 1 to 200."
@@ -48,7 +48,7 @@ def emomeSendSMS(s, recipients, msg):
     else:
         recvList = list(set(recvList)) # remove duplicate number.
         recipients = ','.join(recvList)
-    
+
     # sned the message
     postfield = {
                   "nextURL": "0",
@@ -67,10 +67,10 @@ def emomeLogin(username, password):
     url = "http://websms1.emome.net/sms/sendsms/new.jsp?msg="
     authUrl = "https://member.cht.com.tw/HiReg/multiauthentication"
     confirmUrl = "https://member.cht.com.tw/HiReg/redirect?m=logininfo"
-    
+
     s = requests.Session()
     r = s.get(url)
-    
+
     if r.history:
         content = r.text
         match = re.search(".*checksum.*value=\"(?P<checksum>[a-f0-9]+)\"/>", content)
@@ -101,10 +101,10 @@ def emomeLogin(username, password):
                 return s
             else:
                 print "Unable to retrieve Emome WebSMS interface"
-                return "False"
+                return False
         else:
             print "Something wrong with Emome authentication!"
-            return "False"
+            return False
     else:
         print "Unable to open Emome website"
         return False
